@@ -9,8 +9,8 @@ app.use(express.static("public"));
 const Datastore = require("nedb-promises");
 const database = Datastore.create("database.db");
 
-app.get("/vote/:pollId/:choice", async (request, response) => {
-  const _id = request.params.pollId;
+app.get("/vote/:choice", async (request, response) => {
+  const _id = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const choice = request.params.choice;
   const poll = await database.findOne({ _id });
 
@@ -25,8 +25,8 @@ app.get("/vote/:pollId/:choice", async (request, response) => {
   response.send(votes);
 });
 
-app.get("/votes/:pollId", async (request, response) => {
-  const _id = request.params.pollId;
+app.get("/votes/result", async (request, response) => {
+  const _id = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
   const poll = await database.findOne({ _id });
   response.send(poll);
 });
